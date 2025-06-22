@@ -68,6 +68,7 @@ class Klient:
             return [latitude, longitude]
         except:
             return [52.23, 21.00]
+
 # Funkcje dla urzędów
 def dodaj_urzad():
     nazwa = entry_nazwa_urzad.get()
@@ -410,25 +411,6 @@ entry_miejscowosc_urzad.grid(row=3, column=1)
 button_dodaj_urzad = Button(ramka_formularz, text='Dodaj', command=dodaj_urzad)
 button_dodaj_urzad.grid(row=4, column=0, columnspan=2)
 
-# Formularz urzędów
-label_nazwa_urzad = Label(ramka_formularz, text='Nazwa urzędu')
-label_nazwa_urzad.grid(row=1, column=0, sticky=W)
-entry_nazwa_urzad = Entry(ramka_formularz)
-entry_nazwa_urzad.grid(row=1, column=1)
-
-label_adres_urzad = Label(ramka_formularz, text='Adres')
-label_adres_urzad.grid(row=2, column=0, sticky=W)
-entry_adres_urzad = Entry(ramka_formularz)
-entry_adres_urzad.grid(row=2, column=1)
-
-label_miejscowosc_urzad = Label(ramka_formularz, text='Miejscowość')
-label_miejscowosc_urzad.grid(row=3, column=0, sticky=W)
-entry_miejscowosc_urzad = Entry(ramka_formularz)
-entry_miejscowosc_urzad.grid(row=3, column=1)
-
-button_dodaj_urzad = Button(ramka_formularz, text='Dodaj', command=dodaj_urzad)
-button_dodaj_urzad.grid(row=4, column=0, columnspan=2)
-
 # Formularz pracowników
 label_imie_pracownik = Label(ramka_formularz, text='Imię pracownika')
 label_imie_pracownik.grid(row=5, column=0, sticky=W)
@@ -537,3 +519,41 @@ map_widget = tkintermapview.TkinterMapView(ramka_mapa, width=800, height=600)
 map_widget.grid(row=0, column=0, columnspan=2)
 map_widget.set_position(52.23, 21.00)
 map_widget.set_zoom(6)
+
+# Dynamiczne przypisanie akcji w zależności od trybu
+def ustaw_tryb(tryb):
+    global pokaz_szczegoly, usun_obiekt, edytuj_obiekt
+    listbox_lista_obiektow.delete(0, END)
+    if tryb == 'urzedy':
+        pokaz_urzedy()
+        pokaz_szczegoly = pokaz_szczegoly_urzad
+        usun_obiekt = usun_urzad
+        edytuj_obiekt = edytuj_urzad
+    elif tryb == 'pracownicy':
+        pokaz_pracownikow()
+        pokaz_szczegoly = pokaz_szczegoly_pracownika
+        usun_obiekt = usun_pracownika
+        edytuj_obiekt = edytuj_pracownika
+    elif tryb == 'klienci':
+        pokaz_klientow()
+        pokaz_szczegoly = pokaz_szczegoly_klienta
+        usun_obiekt = usun_klienta
+        edytuj_obiekt = edytuj_klienta
+    button_pokaz_szczegoly.config(command=pokaz_szczegoly)
+    button_usun_obiekt.config(command=usun_obiekt)
+    button_edytuj_obiekt.config(command=edytuj_obiekt)
+
+# Przyciski wyboru trybu
+button_tryb_urzedy = Button(ramka_lista_obiektow, text='Urzędy', command=lambda: ustaw_tryb('urzedy'))
+button_tryb_urzedy.grid(row=3, column=0)
+
+button_tryb_pracownicy = Button(ramka_lista_obiektow, text='Pracownicy', command=lambda: ustaw_tryb('pracownicy'))
+button_tryb_pracownicy.grid(row=3, column=1)
+
+button_tryb_klienci = Button(ramka_lista_obiektow, text='Klienci', command=lambda: ustaw_tryb('klienci'))
+button_tryb_klienci.grid(row=3, column=2)
+
+# Ustaw domyślny tryb
+ustaw_tryb('urzedy')
+
+root.mainloop()
